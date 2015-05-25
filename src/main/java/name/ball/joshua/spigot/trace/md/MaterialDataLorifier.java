@@ -2,7 +2,7 @@ package name.ball.joshua.spigot.trace.md;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -14,7 +14,7 @@ public class MaterialDataLorifier implements Listener {
 //    private Map<Inventory,Map<ItemStack>> inventories = new LinkedHashSet<Inventory>();
 
     @EventHandler
-    public void onInventoryOpen(InventoryOpenEvent inventoryOpenEvent) {
+    public void onInventoryOpen(InventoryEvent inventoryOpenEvent) {
         for (ItemStack itemStack : inventoryOpenEvent.getInventory()) {
             if (itemStack == null) continue;
             ItemMeta itemMeta = itemStack.getItemMeta();

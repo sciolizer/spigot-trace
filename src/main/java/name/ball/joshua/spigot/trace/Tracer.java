@@ -66,6 +66,7 @@ public class Tracer extends JavaPlugin implements Listener {
                 }
             }
         });
+        getCommand("potion").setExecutor(new PotionCommandExecutor());
         Bukkit.getPluginManager().registerEvents(materialDataLorifier, this);
     }
 
@@ -79,4 +80,5 @@ public class Tracer extends JavaPlugin implements Listener {
         });
         return new DI(providers);
     }
+
 }
