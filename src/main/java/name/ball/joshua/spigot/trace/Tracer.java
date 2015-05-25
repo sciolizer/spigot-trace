@@ -2,6 +2,8 @@ package name.ball.joshua.spigot.trace;
 
 import name.ball.joshua.spigot.trace.di.DI;
 import name.ball.joshua.spigot.trace.di.Inject;
+import name.ball.joshua.spigot.trace.md.MaterialDataLorifier;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +17,7 @@ import java.util.Map;
 public class Tracer extends JavaPlugin implements Listener {
 
     @Inject private Events events;
+    @Inject private MaterialDataLorifier materialDataLorifier;
     @Inject private TraceCommandFactory traceCommandFactory;
 
     public void onDisable() {
@@ -63,6 +66,7 @@ public class Tracer extends JavaPlugin implements Listener {
                 }
             }
         });
+        Bukkit.getPluginManager().registerEvents(materialDataLorifier, this);
     }
 
     private DI getDI() {
