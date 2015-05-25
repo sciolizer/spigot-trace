@@ -10,13 +10,20 @@ public class Trackable {
 
     @Inject private MethodPropertyMapper methodPropertyMapper;
 
+    private final Owner owner;
     private final Class<? extends Event> eventClass;
     private final List<String> propertyChain;
 
-    public Trackable(Class<? extends Event> eventClass, List<String> propertyChain) throws NoSuchMethodException {
+    public Trackable(Owner owner, Class<? extends Event> eventClass, List<String> propertyChain) throws NoSuchMethodException {
+        this.owner = owner;
         this.eventClass = eventClass;
         this.propertyChain = Collections.unmodifiableList(propertyChain);
-        getTypeUnsafe(); // to throw NoSuchMethodException
+        try {
+            getTypeUnsafe(); // to throw NoSuchMethodException
+        } catch (NoSuchMethodException e) {
+            // only a warning because the actual item might have the property after a "cast"
+            owner.getCommandSender().sendMessage("Warning: " + e.getMessage());
+        }
     }
 
     public List<Trackable> getSubTrackables() {
@@ -34,7 +41,7 @@ public class Trackable {
         for (Method method : methods) {
             String propertyName = methodPropertyMapper.getPropertyName(method);
             if (propertyName != null) {
-                result.put(propertyName, new Trackable(eventClass, extend(propertyName)));
+                result.put(propertyName, new Trackable(owner, eventClass, extend(propertyName)));
             }
         }
         return new ArrayList<Trackable>(result.values());
@@ -73,7 +80,7 @@ public class Trackable {
         for (String property : propertyChain) {
             Method method;
             try {
-                method = eventClass.getMethod("get" + property);
+                method = o.getClass().getMethod("get" + property);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

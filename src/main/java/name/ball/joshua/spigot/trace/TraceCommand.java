@@ -44,7 +44,11 @@ public class TraceCommand {
 
     protected Trackable getTrackable(String property) {
         try {
-            return trackableFactory.newTrackable(property);
+            return trackableFactory.newTrackable(new Owner() {
+                @Override public CommandSender getCommandSender() {
+                    return commandSender; // todo static class so don't keep reference to tracecommand class around
+                }
+            }, property);
         } catch (NoSuchMethodException e) {
             commandSender.sendMessage("Unknown property type: '" + e.getMessage() + "'.");
             return null;

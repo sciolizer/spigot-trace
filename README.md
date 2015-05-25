@@ -33,3 +33,8 @@ outputs
 All log lines can be cancelled with delete all.
 
     /trace delete all
+
+Known bugs
+----------
+
+Can't do properties more than 1 layer deep, e.g. BrewEvent.Contents.Ingredient
