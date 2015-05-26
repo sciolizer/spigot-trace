@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.Potion;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,10 +60,18 @@ public class PotionCommandExecutor implements CommandExecutor {
                 });
             }
         }
+        Potion potion = null;
+        int i = 0;
         for (Range range : ranges) {
             for (Short r : range.getRange()) {
-                Bukkit.getServer().broadcastMessage("r = " + r);
+                potion = Potion.fromDamage(r);
+                Bukkit.getServer().broadcastMessage(potionToString(potion));
+                i++;
             }
+        }
+        if (i == 1 && sender instanceof Player) {
+            Player player = (Player) sender;
+            player.getInventory().setItem(0, potion.toItemStack(1));
         }
         return true;
     }
@@ -69,4 +79,12 @@ public class PotionCommandExecutor implements CommandExecutor {
     private interface Range {
         List<Short> getRange();
     }
+
+    private String potionToString(Potion potion) {
+        String extended = potion.hasExtendedDuration() ? ";extended" : "";
+        String leveled = potion.getLevel() == 2 ? ";leveled" : "";
+        String splash = potion.isSplash() ?  ";splash" : "";
+        return potion.toDamageValue() + "(" + potion.getType() + extended + leveled + splash + ")";
+    }
+
 }
