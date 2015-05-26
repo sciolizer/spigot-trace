@@ -13,6 +13,7 @@ import java.util.List;
 
 public class PotionCommandExecutor implements CommandExecutor {
     @Override public boolean onCommand(CommandSender sender, Command command, String c, String[] args) {
+
         if (args.length != 1) {
             sender.sendMessage("Expected exactly one argument");
             return false;

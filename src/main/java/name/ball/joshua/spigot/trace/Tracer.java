@@ -17,6 +17,7 @@ import java.util.Map;
 public class Tracer extends JavaPlugin implements Listener {
 
     @Inject private Events events;
+    @Inject private InstaBrewer instaBrewer;
     @Inject private MaterialDataLorifier materialDataLorifier;
     @Inject private TraceCommandFactory traceCommandFactory;
 
@@ -68,6 +69,7 @@ public class Tracer extends JavaPlugin implements Listener {
         });
         getCommand("potion").setExecutor(new PotionCommandExecutor());
         Bukkit.getPluginManager().registerEvents(materialDataLorifier, this);
+        Bukkit.getPluginManager().registerEvents(instaBrewer, this);
     }
 
     private DI getDI() {
