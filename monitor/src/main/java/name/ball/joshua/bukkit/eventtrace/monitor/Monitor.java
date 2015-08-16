@@ -2,6 +2,7 @@ package name.ball.joshua.bukkit.eventtrace.monitor;
 
 import name.ball.joshua.bukkit.eventtrace.api.Api;
 import name.ball.joshua.bukkit.eventtrace.api.ApiSerializables;
+import name.ball.joshua.bukkit.eventtrace.api.RerunnableQuery;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -21,7 +22,8 @@ public class Monitor {
         query.projection = new ApiSerializables.Projection();
         query.projection.klass = true;
         query.projection.properties = Collections.emptyList();
-        ApiSerializables.Events events = api.getEvents(query);
+        RerunnableQuery rerunnableQuery = api.getEvents(query);
+        ApiSerializables.Events events = rerunnableQuery.runQuery();
         System.out.println(events);
     }
 }

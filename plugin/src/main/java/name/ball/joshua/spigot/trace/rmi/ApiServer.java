@@ -2,22 +2,22 @@ package name.ball.joshua.spigot.trace.rmi;
 
 import name.ball.joshua.bukkit.eventtrace.api.Api;
 import name.ball.joshua.bukkit.eventtrace.api.ApiSerializables;
+import name.ball.joshua.bukkit.eventtrace.api.RerunnableQuery;
 import name.ball.joshua.spigot.trace.AllEvents;
 import name.ball.joshua.spigot.trace.di.InitializingBean;
 import name.ball.joshua.spigot.trace.di.Inject;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.SynchronousQueue;
 
 public class ApiServer extends UnicastRemoteObject implements Api, InitializingBean {
 
     @Inject private Plugin plugin;
     @Inject private AllEvents allEvents;
+    @Inject private RememberingQueryFactory rememberingQueryFactory;
 
     public ApiServer() throws RemoteException {
         super(0);    // required to avoid the 'rmic' step, see below
@@ -29,24 +29,8 @@ public class ApiServer extends UnicastRemoteObject implements Api, InitializingB
     }
 
     @Override
-    public ApiSerializables.Events getEvents(final ApiSerializables.Query query) {
-        final SynchronousQueue<ApiSerializables.Events> result = new SynchronousQueue<ApiSerializables.Events>();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ApiSerializables.Events eventsInGameThread = allEvents.getEvents(query);
-                try {
-                    result.put(eventsInGameThread);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }.runTask(plugin);
-        try {
-            return result.take();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public RerunnableQuery getEvents(final ApiSerializables.Query query) {
+        return rememberingQueryFactory.newRememberingQuery(query);
     }
 
     public static void bind(ApiServer server) throws Exception {
