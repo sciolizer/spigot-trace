@@ -1,0 +1,44 @@
+triggers:
+  any event fires
+  a particular type (or subtype) of event fires
+  an event fires in which some property on the event equals some value
+    is null/non-null
+
+actions:
+  log (to a filter which outputs certain pieces of information)
+  add to a buffer
+  
+
+let me know when a particular event fires
+let me know when any subtype of a particular event fires
+let me know when an
+
+
+<generalized-event> = <event-type>(.<prop>((=|~)<value)?)*
+
+= means the toString of the property matches exactly
+~ means the toString of the property contains the substring
+
+
+/t reflect <generalized-event>
+outputs all of the properties on an event that can be watched
+/t grep <query> <depth>? - outputs all generalized-events containing the query as a substring. depth defaults to 1 (i.e. only event-types, not their properties).
+/t create <generalized-event>
+/t delete (all|<int>|<generalized-event>)
+/t on <generalized-event>
+/t off (all|<int>|<generalized-event>)
+/t list -- prefixes each with a number so it can be easily turned off; note that numbers are sticky - if you have 5 triggers, and you delete #3, the remaining will be #1, #2, #4, #5 - 4 and 5 are not renumbered
+
+output of each event is 
+
+EventType(prop=blarg)
+
+in v2 we might aggregate these together (which would be useful for knowing when to logged events are in fact the same event
+
+MVP:
+
+generalized-event does not support filters
+/t delete all
+/t reflect <generalized-event>
+/t create <generalized-event>
+
