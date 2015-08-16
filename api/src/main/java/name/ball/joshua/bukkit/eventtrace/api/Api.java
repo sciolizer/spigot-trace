@@ -1,4 +1,4 @@
-package name.ball.joshua.spigot.trace;
+package name.ball.joshua.bukkit.eventtrace.api;
 
 import java.io.Serializable;
 import java.util.List;

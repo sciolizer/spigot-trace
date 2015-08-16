@@ -1,5 +1,6 @@
 package name.ball.joshua.spigot.trace;
 
+import name.ball.joshua.bukkit.eventtrace.api.Api;
 import name.ball.joshua.spigot.trace.di.DI;
 import name.ball.joshua.spigot.trace.di.Inject;
 import org.bukkit.Bukkit;
