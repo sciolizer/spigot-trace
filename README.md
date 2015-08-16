@@ -53,3 +53,5 @@ That way you could drill down arbitrarily into the events and see any properties
 Not sure how quickly the events will accumulate... that's probably a good question to answer before going much further into the design.
 Different kinds of screens you'd like to be able to see:
   For a set of
+
+oh dude - there's also the different priorities - would be interesting to see when the events are getting cancelled and when they are not
