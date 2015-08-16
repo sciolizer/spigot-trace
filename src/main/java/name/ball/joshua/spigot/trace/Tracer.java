@@ -7,24 +7,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Tracer extends JavaPlugin implements Listener {
 
     @Inject private Events events;
-    @Inject private InstaBrewer instaBrewer;
-    @Inject private MaterialDataLorifier materialDataLorifier;
-    @Inject private TraceCommandFactory traceCommandFactory;
+//    @Inject private InstaBrewer instaBrewer;
+//    @Inject private MaterialDataLorifier materialDataLorifier;
+//    @Inject private TraceCommandFactory traceCommandFactory;
 
     public void onDisable() {
     }
 
+    @Override
     public void onEnable() {
+        List<Class<? extends Event>> eventClasses = events.getEvents();
+        for (Class<? extends Event> eventClass : eventClasses) {
+
+        }
+    }
+
+    public void onEnablePrev() {
         getDI().injectMembers(this);
         getCommand("trace").setExecutor(new CommandExecutor() {
             @Override
