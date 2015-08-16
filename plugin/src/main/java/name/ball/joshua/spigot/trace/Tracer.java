@@ -1,7 +1,6 @@
 package name.ball.joshua.spigot.trace;
 
 import name.ball.joshua.spigot.trace.di.DI;
-import name.ball.joshua.spigot.trace.di.InitializingBean;
 import name.ball.joshua.spigot.trace.di.Inject;
 import name.ball.joshua.spigot.trace.rmi.ApiServer;
 import org.bukkit.Bukkit;
@@ -17,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Tracer extends JavaPlugin implements Listener, InitializingBean {
+public class Tracer extends JavaPlugin implements Listener { // }, InitializingBean {
 
     @Inject private Events events;
 //    @Inject private InstaBrewer instaBrewer;
@@ -35,10 +34,10 @@ public class Tracer extends JavaPlugin implements Listener, InitializingBean {
     public void onDisable() {
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        ApiServer.bind(apiServer);
-    }
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        ApiServer.bind(apiServer);
+//    }
 
 //    private void serializeAll() throws IOException {
 //        List<Event> completeListOfEvents = allEvents.events;

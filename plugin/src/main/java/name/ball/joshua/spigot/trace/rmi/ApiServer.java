@@ -1,7 +1,9 @@
 package name.ball.joshua.spigot.trace.rmi;
 
 import name.ball.joshua.bukkit.eventtrace.api.Api;
+import name.ball.joshua.bukkit.eventtrace.api.ApiSerializables;
 import name.ball.joshua.spigot.trace.AllEvents;
+import name.ball.joshua.spigot.trace.di.InitializingBean;
 import name.ball.joshua.spigot.trace.di.Inject;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -12,7 +14,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.SynchronousQueue;
 
-public class ApiServer extends UnicastRemoteObject implements Api {
+public class ApiServer extends UnicastRemoteObject implements Api, InitializingBean {
 
     @Inject private Plugin plugin;
     @Inject private AllEvents allEvents;
@@ -22,12 +24,17 @@ public class ApiServer extends UnicastRemoteObject implements Api {
     }
 
     @Override
-    public Events getEvents(final Query query) {
-        final SynchronousQueue<Events> result = new SynchronousQueue<Events>();
+    public void afterPropertiesSet() throws Exception {
+        bind(this); // todo find a better way
+    }
+
+    @Override
+    public ApiSerializables.Events getEvents(final ApiSerializables.Query query) {
+        final SynchronousQueue<ApiSerializables.Events> result = new SynchronousQueue<ApiSerializables.Events>();
         new BukkitRunnable() {
             @Override
             public void run() {
-                Events eventsInGameThread = allEvents.getEvents(query);
+                ApiSerializables.Events eventsInGameThread = allEvents.getEvents(query);
                 try {
                     result.put(eventsInGameThread);
                 } catch (InterruptedException e) {
@@ -56,7 +63,7 @@ public class ApiServer extends UnicastRemoteObject implements Api {
         //Instantiate RmiServer
 
         // Bind this object instance to the name "RmiServer"
-        Naming.rebind("//localhost/" + Api.RMI_NAME, server);
+        Naming.rebind("//localhost/" + ApiSerializables.RMI_NAME, server);
         System.out.println("PeerServer bound in registry");
     }
 }

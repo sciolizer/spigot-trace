@@ -1,6 +1,6 @@
 package name.ball.joshua.spigot.trace;
 
-import name.ball.joshua.bukkit.eventtrace.api.Api;
+import name.ball.joshua.bukkit.eventtrace.api.ApiSerializables;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.Field;
@@ -26,7 +26,7 @@ public class AllEvents {
         }
     }
 
-    public Api.Events getEvents(final Api.Query query) {
+    public ApiSerializables.Events getEvents(final ApiSerializables.Query query) {
         try {
             return getEventsUnsafe(query);
         } catch (NoSuchFieldException e) {
@@ -36,13 +36,13 @@ public class AllEvents {
         }
     }
 
-    private Api.Events getEventsUnsafe(final Api.Query query) throws NoSuchFieldException, IllegalAccessException {
-        Api.Events result = new Api.Events();
+    private ApiSerializables.Events getEventsUnsafe(final ApiSerializables.Query query) throws NoSuchFieldException, IllegalAccessException {
+        ApiSerializables.Events result = new ApiSerializables.Events();
         for (TrackedEvent event : events) {
             String eventClassName = event.event.getClass().getSimpleName();
             if (query.filter.classes != null && !query.filter.classes.contains(eventClassName)) continue;
             if (query.filter.ids != null && !query.filter.ids.contains(event.id)) continue;
-            Api.EventInfo eventInfo = new Api.EventInfo();
+            ApiSerializables.EventInfo eventInfo = new ApiSerializables.EventInfo();
             eventInfo.id = event.id;
             eventInfo.when = event.when;
             if (query.projection.klass) {
@@ -51,8 +51,8 @@ public class AllEvents {
             if (query.projection.properties.isEmpty()) {
                 eventInfo.values = Collections.emptyList();
             } else {
-                eventInfo.values = new ArrayList<Api.Value>(query.projection.properties.size());
-                for (Api.Property property : query.projection.properties) {
+                eventInfo.values = new ArrayList<ApiSerializables.Value>(query.projection.properties.size());
+                for (ApiSerializables.Property property : query.projection.properties) {
                     Object value = event.event;
                     for (String field : property.chain.fields) { // todo: stop early on nulls
                         Field declaredField = value.getClass().getDeclaredField(field);
