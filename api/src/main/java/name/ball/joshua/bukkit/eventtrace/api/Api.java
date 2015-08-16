@@ -5,6 +5,15 @@ import java.util.List;
 
 public interface Api { // maybe just do ordinary object serialization?
 
+    public static final String RMI_NAME = "eventtrace";
+
+    Events getEvents(Query query);
+
+    public static class Events implements Serializable {
+        private static final long serialVersionUID = 0l;
+        public List<EventInfo> events;
+    }
+
     public static class EventInfo implements Serializable {
         private static final long serialVersionUID = 0l;
         public int id; // first event has id 0
@@ -20,6 +29,12 @@ public interface Api { // maybe just do ordinary object serialization?
     }
 
     public static class Query implements Serializable {
+        private static final long serialVersionUID = 0l;
+        public Filter filter;
+        public Projection projection;
+    }
+
+    public static class Filter implements Serializable {
         private static final long serialVersionUID = 0l;
         public List<Integer> ids; // where id in this set; skipped if null
         public List<String> classes; // where class in this set; skipped if null

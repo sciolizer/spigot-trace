@@ -13,6 +13,7 @@
     <modules>
         <module>plugin</module>
         <module>api</module>
+        <module>monitor</module>
     </modules>
 
     <build>
