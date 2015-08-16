@@ -1,8 +1,9 @@
 package name.ball.joshua.spigot.trace;
 
-import name.ball.joshua.bukkit.eventtrace.api.Api;
 import name.ball.joshua.spigot.trace.di.DI;
+import name.ball.joshua.spigot.trace.di.InitializingBean;
 import name.ball.joshua.spigot.trace.di.Inject;
+import name.ball.joshua.spigot.trace.rmi.ApiServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -12,20 +13,21 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Tracer extends JavaPlugin implements Listener {
+public class Tracer extends JavaPlugin implements Listener, InitializingBean {
 
     @Inject private Events events;
 //    @Inject private InstaBrewer instaBrewer;
 //    @Inject private MaterialDataLorifier materialDataLorifier;
 //    @Inject private TraceCommandFactory traceCommandFactory;
 
-    private List<Event> allEvents = new ArrayList<Event>(); // even at 32,900 events, the server was still only using half (200mb) of its allocated ram (400mb).
+    @Inject private AllEvents allEvents;
+    @Inject private ApiServer apiServer;
+
+//    private List<Event> allEvents = new ArrayList<Event>(); // even at 32,900 events, the server was still only using half (200mb) of its allocated ram (400mb).
     // So it's probably entirely reasonable to keep the most recent 100,000 events.
     // I suggest that for each new screen the user opens, we create a new collection. That way our "allEvents" tab
     // can continue to roll over without affecting the watched collections.
@@ -33,31 +35,37 @@ public class Tracer extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
-    private void serializeAll() throws IOException {
-        List<Api.EventInfo> result = new ArrayList<Api.EventInfo>(allEvents.size());
-        int i = 0;
-        for (Event event : allEvents) {
-            Api.EventInfo eventInfo = new Api.EventInfo();
-            eventInfo.id = i;
-            eventInfo.klass = event.getClass().getSimpleName();
-            eventInfo.when = i; // todo
-            Api.Value value = new Api.Value();
-            value.integer = 0;
-            value.string = "yes";
-            eventInfo.values = Collections.singletonList(value);
-            result.add(eventInfo);
-            i++;
-        }
-        long start = System.nanoTime();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(result);
-        long end = System.nanoTime();
-        long millis = TimeUnit.NANOSECONDS.toMillis(end - start);
-        Bukkit.getServer().broadcastMessage("millis = " + millis);
-        int size = baos.toByteArray().length;
-        Bukkit.getServer().broadcastMessage("size = " + size);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ApiServer.bind(apiServer);
     }
+
+//    private void serializeAll() throws IOException {
+//        List<Event> completeListOfEvents = allEvents.events;
+//        List<Api.EventInfo> result = new ArrayList<Api.EventInfo>(completeListOfEvents.size());
+//        int i = 0;
+//        for (Event event : completeListOfEvents) {
+//            Api.EventInfo eventInfo = new Api.EventInfo();
+//            eventInfo.id = i;
+//            eventInfo.klass = event.getClass().getSimpleName();
+//            eventInfo.when = i; // todo
+//            Api.Value value = new Api.Value();
+//            value.integer = 0;
+//            value.string = "yes";
+//            eventInfo.values = Collections.singletonList(value);
+//            result.add(eventInfo);
+//            i++;
+//        }
+//        long start = System.nanoTime();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        ObjectOutputStream oos = new ObjectOutputStream(baos);
+//        oos.writeObject(result);
+//        long end = System.nanoTime();
+//        long millis = TimeUnit.NANOSECONDS.toMillis(end - start);
+//        Bukkit.getServer().broadcastMessage("millis = " + millis);
+//        int size = baos.toByteArray().length;
+//        Bukkit.getServer().broadcastMessage("size = " + size);
+//    }
 
     @Override
     public void onEnable() {
@@ -69,17 +77,19 @@ public class Tracer extends JavaPlugin implements Listener {
 
             @Override
             public void execute(Listener listener, Event event) throws EventException {
-//                Bukkit.getServer().broadcastMessage("adding event");
                 allEvents.add(event);
-                int size = allEvents.size();
-                if (size % 100 == 0) {
-                    Bukkit.getServer().broadcastMessage("size = " + size);
-                    try {
-                        serializeAll();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+//                Bukkit.getServer().broadcastMessage("adding event");
+//                List<Event> completeListOfEvents = allEvents.events;
+//                completeListOfEvents.add(event);
+//                int size = completeListOfEvents.size();
+//                if (size % 100 == 0) {
+//                    Bukkit.getServer().broadcastMessage("size = " + size);
+//                    try {
+//                        serializeAll();
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
             }
         };
         for (Class<? extends Event> eventClass : eventClasses) {

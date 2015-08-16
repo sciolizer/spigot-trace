@@ -1,17 +1,19 @@
 package name.ball.joshua.bukkit.eventtrace.api;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Api { // maybe just do ordinary object serialization?
 
     public static final String RMI_NAME = "eventtrace";
 
+    // todo: return a reference instead of a Serializable, so that we can take advantage of distributed garbage collection
     Events getEvents(Query query);
 
     public static class Events implements Serializable {
         private static final long serialVersionUID = 0l;
-        public List<EventInfo> events;
+        public List<EventInfo> events = new ArrayList<EventInfo>();
     }
 
     public static class EventInfo implements Serializable {
@@ -26,6 +28,7 @@ public interface Api { // maybe just do ordinary object serialization?
         private static final long serialVersionUID = 0l;
         public String string;
         public Integer integer;
+        public String error;
     }
 
     public static class Query implements Serializable {
@@ -74,5 +77,18 @@ public interface Api { // maybe just do ordinary object serialization?
     public static enum Evaluation implements Serializable {
         TO_STRING, IDENTITY_HASH_CODE;
         private static final long serialVersionUID = 0l;
+
+        public Value evaluate(Object value) {
+            Value result = new Value();
+            switch (this) {
+                case TO_STRING:
+                    result.string = value.toString(); // todo: catch exception and set error when exception occurs
+                    break;
+                case IDENTITY_HASH_CODE:
+                    result.integer = System.identityHashCode(value);
+                    break;
+            }
+            return result;
+        }
     }
 }
