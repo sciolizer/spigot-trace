@@ -38,3 +38,18 @@ Known bugs
 ----------
 
 Can't do properties more than 1 layer deep, e.g. BrewEvent.Contents.Ingredient
+
+Plans
+-----
+
+Since this is for development only, there's really not much point in trying to control everything from the game itself.
+Instead, build a normal swing gui, and control everything from there.
+
+run arbitrary java code and/or javascript; probably also nicer to have an external program running
+
+in order to get maximum introspectability, you'd want to preserve all of the events within the memory of the minecraft game itself.
+That way you could drill down arbitrarily into the events and see any properties you wanted to
+
+Not sure how quickly the events will accumulate... that's probably a good question to answer before going much further into the design.
+Different kinds of screens you'd like to be able to see:
+  For a set of
