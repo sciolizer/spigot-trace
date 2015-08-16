@@ -50,6 +50,13 @@ public class ApiServer extends UnicastRemoteObject implements Api, InitializingB
     }
 
     public static void bind(ApiServer server) throws Exception {
+        if (System.getSecurityManager() == null) {
+            SecurityManager securityManager = new PermissiveSecurityManager();
+            System.setSecurityManager(securityManager);
+            System.out.println("Created and set my own security manager");
+        } else {
+            System.out.println("There is already a security manager");
+        }
         System.out.println("RMI server started");
 
         try { //special exception handler for registry creation
@@ -66,4 +73,5 @@ public class ApiServer extends UnicastRemoteObject implements Api, InitializingB
         Naming.rebind("//localhost/" + ApiSerializables.RMI_NAME, server);
         System.out.println("PeerServer bound in registry");
     }
+
 }
